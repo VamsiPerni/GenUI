@@ -6,13 +6,12 @@ import { ErrorToast } from "../utils/toastHelper";
 const Navbar = () => {
   const { user = {} } = useAppContext();
   const navigate = useNavigate();
-
   const { isAuthenticated } = user;
 
   const handleLogout = async () => {
     try {
       await axiosInstance.get("/auth/logout");
-      ErrorToast("Logout Successfull !!");
+      ErrorToast("Logout Successful!");
       window.location.reload();
     } catch (err) {
       ErrorToast(err.message);
@@ -24,38 +23,45 @@ const Navbar = () => {
   };
 
   return (
-    <div className="p-6 flex items-center justify-between bg-amber-200">
-      <div>My App</div>
-      <div></div>
-      <div className="flex gap-4 ">
-        <Link to="/">Home</Link>
-        {!isAuthenticated ? (
-          <div className="flex gap-4 items-center">
-            <Link to="/login" className="text-blue-500 underline">
-              Login
-            </Link>
-            <Link to="/signup" className="text-blue-500 underline">
-              Signup
-            </Link>
-          </div>
-        ) : (
-          <>
-            <button
-              className="py-1 px-2 border-1 border-blue-600 bg-blue-200 rounded-md"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-            <div
-              onClick={handleOpenProfilePage}
-              className="h-10 w-10 rounded-full bg-indigo-900 text-amber-100 text-xl flex items-center justify-center"
-            >
-              <p>{user?.email?.substr(0, 1)?.toUpperCase()}</p>
-            </div>
-          </>
-        )}
+    <nav className="bg-[#1e1e2f] text-white px-6 py-4 shadow-lg">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="text-2xl font-bold text-indigo-400">GenUI</div>
+        <div className="flex gap-6 items-center">
+          <Link to="/" className="hover:text-indigo-400 transition-colors">
+            Home
+          </Link>
+          <Link to="/session" className="text-blue-600 underline">
+            Session
+          </Link>
+
+          {!isAuthenticated ? (
+            <>
+              <Link to="/login" className="text-indigo-300 hover:underline">
+                Login
+              </Link>
+              <Link to="/signup" className="text-indigo-300 hover:underline">
+                Signup
+              </Link>
+            </>
+          ) : (
+            <>
+              <button
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-md transition"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+              <div
+                onClick={handleOpenProfilePage}
+                className="h-10 w-10 rounded-full bg-indigo-400 text-white text-lg flex items-center justify-center cursor-pointer"
+              >
+                {user?.email?.charAt(0)?.toUpperCase()}
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </nav>
   );
 };
 
