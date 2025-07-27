@@ -2,6 +2,7 @@ const express = require("express");
 const { authRouter } = require("./auth/routes");
 const { usersRouter } = require("./users/routes");
 const { userAuthenticationMiddleware } = require("./middleware");
+const { sessionsRouter } = require("./sessions/routes");
 
 const apiRouter = express.Router();
 
@@ -13,5 +14,6 @@ apiRouter.use(userAuthenticationMiddleware);
 // if anyone want to reach the below {/users} then they need to pass the above checks
 
 apiRouter.use("/users", usersRouter);
+apiRouter.use("/sessions", sessionsRouter);
 
 module.exports = { apiRouter };
