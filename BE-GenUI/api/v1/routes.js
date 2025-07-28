@@ -3,6 +3,7 @@ const { authRouter } = require("./auth/routes");
 const { usersRouter } = require("./users/routes");
 const { userAuthenticationMiddleware } = require("./middleware");
 const { sessionsRouter } = require("./sessions/routes");
+const { llmRouter } = require("./llm/routes");
 
 const apiRouter = express.Router();
 
@@ -15,5 +16,6 @@ apiRouter.use(userAuthenticationMiddleware);
 
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/sessions", sessionsRouter);
+apiRouter.use("/ai", llmRouter);
 
 module.exports = { apiRouter };
