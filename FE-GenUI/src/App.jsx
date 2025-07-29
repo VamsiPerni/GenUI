@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router";
 import { BrowserRouter } from "react-router";
 import { useAppContext } from "./contexts/appContext";
-import { BounceLoader } from "react-spinners";
+import { BounceLoader, HashLoader } from "react-spinners";
 import { SignupPage } from "./pages/SignupPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
@@ -19,7 +19,7 @@ const App = () => {
   if (appLoading) {
     return (
       <div className="min-h-[100vh] flex flex-col items-center justify-center gap-10 content-center">
-        <BounceLoader size="175" color="#2020ff" />
+        <HashLoader size="175" color="#2020ff" />
         <div className="border-1 border-lime-800 p-8 rounded-lg">
           <p>Please note:</p>
           <p>Backend is hosted on free server</p>

@@ -33,8 +33,11 @@ const Navbar = () => {
           <Link to="/" className="hover:text-indigo-400 transition-colors">
             Home
           </Link>
-          <Link to="/session" className="text-blue-600 underline">
-            Session
+          <Link
+            to="/session"
+            className="hover:text-indigo-400 transition-colors"
+          >
+            Sessions
           </Link>
 
           {!isAuthenticated ? (
