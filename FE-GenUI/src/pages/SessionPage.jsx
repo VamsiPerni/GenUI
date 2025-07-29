@@ -106,9 +106,6 @@ const SessionPage = () => {
     );
   }
 
-  console.log("Current JSX:", generatedCode.jsx);
-  console.log("Current CSS:", generatedCode.css);
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />

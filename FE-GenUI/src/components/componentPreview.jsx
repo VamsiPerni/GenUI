@@ -1,143 +1,108 @@
-import { useEffect, useRef, useState } from "react";
+import { LiveProvider, LivePreview, LiveError } from "react-live";
+import React, { useEffect, useState } from "react";
 
 const ComponentPreview = ({ jsx = "", css = "" }) => {
-  const iframeRef = useRef();
-  const [error, setError] = useState(null);
-  const [iframeKey, setIframeKey] = useState(0);
+  const [code, setCode] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!iframeRef.current) return;
-
-    setError(null);
-    setIframeKey((prev) => prev + 1); // Force iframe recreation
-
     if (!jsx.trim()) {
-      setError("No component code to preview");
+      setCode("");
+      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      // Create a clean HTML document
-      const srcDoc = `<!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body {
-              margin: 0;
-              padding: 20px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              min-height: 100vh;
-              background: #f8fafc;
-            }
-            ${css}
-          </style>
-          <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
-          <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
-          <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.15/babel.min.js"></script>
-        </head>
-        <body>
-          <div id="root"></div>
-          <script type="text/babel">
-            // Error boundary
-            class ErrorBoundary extends React.Component {
-              constructor(props) {
-                super(props);
-                this.state = { hasError: false };
-              }
-              
-              static getDerivedStateFromError(error) {
-                return { hasError: true };
-              }
-              
-              componentDidCatch(error, errorInfo) {
-                console.error("Component error:", error, errorInfo);
-              }
-              
-              render() {
-                if (this.state.hasError) {
-                  return (
-                    <div style={{
-                      color: 'red',
-                      padding: '16px',
-                      border: '1px solid red',
-                      backgroundColor: '#fff0f0'
-                    }}>
-                      Error rendering component
-                    </div>
-                  );
-                }
-                return this.props.children;
-              }
-            }
-            
-            // Your component
-            ${jsx}
-            
-            // Render the component
-            const root = ReactDOM.createRoot(document.getElementById('root'));
-            root.render(
-              <ErrorBoundary>
-                <BlueButton onClick={() => alert('Button clicked!')}>
-                  Click Me
-                </BlueButton>
-              </ErrorBoundary>
-            );
-          </script>
-        </body>
-        </html>`;
+      const componentName = extractComponentName(jsx);
 
-      // Create a new iframe each time
-      const newIframe = document.createElement("iframe");
-      newIframe.srcdoc = srcDoc;
-      newIframe.title = "Component Preview";
-      newIframe.sandbox = "allow-scripts allow-same-origin";
-      newIframe.style.width = "100%";
-      newIframe.style.height = "100%";
-      newIframe.style.minHeight = "300px";
-      newIframe.onload = () => console.log("Preview loaded successfully");
-      newIframe.onerror = () => setError("Failed to load preview");
+      const renderCode = `
+        ${jsx}
 
-      // Replace the iframe
-      const container = iframeRef.current.parentNode;
-      container.replaceChild(newIframe, iframeRef.current);
-      iframeRef.current = newIframe;
-    } catch (err) {
-      setError(err.message);
-      console.error("Preview setup error:", err);
+        const styles = \`${css}\`;
+
+        function PreviewWrapper() {
+          return (
+            <>
+              <style>{styles}</style>
+              <${componentName}>
+                ${getDefaultChildrenJSX(componentName)}
+              </${componentName}>
+            </>
+          );
+        }
+
+        render(<PreviewWrapper />);
+      `;
+
+      setCode(renderCode);
+    } catch (error) {
+      console.error("Error preparing preview:", error);
+      setCode("");
+    } finally {
+      setIsLoading(false);
     }
   }, [jsx, css]);
 
-  return (
-    <div className="h-full flex flex-col border border-gray-200 rounded-lg bg-white">
-      <div className="p-3 border-b border-gray-200 bg-gray-50">
-        <h3 className="font-medium text-gray-800">Component Preview</h3>
-      </div>
+  const scope = {
+    React,
+  };
 
-      <div className="flex-1 relative" key={`preview-${iframeKey}`}>
-        {error ? (
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 w-full">
-              <h4 className="text-red-600 font-medium mb-2">Error</h4>
-              <pre className="text-sm text-red-800 whitespace-pre-wrap">
-                {error}
-              </pre>
-            </div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!code.trim()) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        No component code to preview
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col border rounded-lg overflow-hidden bg-white">
+      <div className="p-3 border-b bg-gray-50">
+        <h3 className="font-medium">Component Preview</h3>
+      </div>
+      <div className="flex-1 p-4">
+        <LiveProvider code={code} scope={scope} noInline>
+          <div className="flex justify-center items-center h-full">
+            <LivePreview className="w-full" />
           </div>
-        ) : (
-          <iframe
-            ref={iframeRef}
-            title="Component Preview"
-            sandbox="allow-scripts allow-same-origin"
-            className="w-full h-full"
-            style={{ minHeight: "300px", border: "none" }}
-          />
-        )}
+          <LiveError className="bg-red-50 text-red-800 p-3 mt-2 rounded text-sm" />
+        </LiveProvider>
       </div>
     </div>
   );
 };
+
+// 🔹 Extract component name from function or arrow declaration
+function extractComponentName(jsx) {
+  const funcMatch = jsx.match(/function\s+([A-Z][A-Za-z0-9]*)\s*\(/);
+  const arrowMatch = jsx.match(
+    /const\s+([A-Z][A-Za-z0-9]*)\s*=\s*(\([^)]*\)|[a-zA-Z0-9]+)?\s*=>/
+  );
+
+  if (funcMatch) return funcMatch[1];
+  if (arrowMatch) return arrowMatch[1];
+  return "GeneratedComponent";
+}
+
+// 🔹 Returns raw JSX, not a string
+function getDefaultChildrenJSX(componentName) {
+  if (componentName.toLowerCase().includes("button")) {
+    return `Click Me`;
+  }
+  if (componentName.toLowerCase().includes("card")) {
+    return `<div style={{ padding: '20px' }}>Card Content</div>`;
+  }
+  return `Preview Content`;
+}
 
 export default ComponentPreview;
