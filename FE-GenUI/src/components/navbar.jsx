@@ -25,7 +25,10 @@ const Navbar = () => {
   return (
     <nav className="bg-[#1e1e2f] text-white px-6 py-4 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="text-2xl font-bold text-indigo-400">GenUI</div>
+        <div className="text-2xl font-bold text-indigo-400">
+          {" "}
+          <Link to="/">GenUI</Link>
+        </div>
         <div className="flex gap-6 items-center">
           <Link to="/" className="hover:text-indigo-400 transition-colors">
             Home
