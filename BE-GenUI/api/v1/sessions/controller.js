@@ -89,10 +89,39 @@ const deleteSessionController = async (req, res) => {
   }
 };
 
+const updateChatController = async (req, res) => {
+  const { sessionId, messages } = req.body;
+  if (!sessionId || !Array.isArray(messages)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing sessionId or messages" });
+  }
+
+  try {
+    // Replace the entire chat array for this session
+    const updated = await Session.findByIdAndUpdate(
+      sessionId,
+      { $set: { chat: messages } },
+      { new: true }
+    );
+    if (!updated) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Session not found" });
+    }
+
+    return res.status(200).json({ success: true, session: updated });
+  } catch (e) {
+    console.error("Chat update error:", e);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   createSessionController,
   getUserSessionsController,
   getSessionByIdController,
   renameSessionController,
   deleteSessionController,
+  updateChatController,
 };

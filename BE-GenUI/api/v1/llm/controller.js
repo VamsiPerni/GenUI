@@ -1,8 +1,16 @@
+const Session = require("../../../models/sessionSchema"); // adjust path as per your structure
 const { getGeminiAiResponse } = require("../../../config/aiclient");
 
 const generateComponentController = async (req, res) => {
   try {
     const { prompt, sessionId } = req.body;
+
+    if (!prompt || !sessionId) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Prompt and sessionId are required",
+      });
+    }
 
     const fullPrompt = `
 You are a React expert. Given the input prompt below, please generate a React component using plain JavaScript (no TypeScript types or interfaces). 
@@ -18,8 +26,8 @@ Prompt: ${prompt}
 
 Respond ONLY with JSON in this exact format:
 {
-  "jsx": "...", // React JSX code without imports or exports
-  "css": "..."  // Corresponding CSS styles
+  "jsx": "...", 
+  "css": "..."  
 }
 `;
 
@@ -29,7 +37,7 @@ Respond ONLY with JSON in this exact format:
       .replace(/```json|```js|```jsx|```ts|```tsx|```css|```/g, "")
       .trim();
 
-    let codeObj = {};
+    let codeObj;
     try {
       codeObj = JSON.parse(cleanedResponse);
     } catch (e) {
@@ -38,9 +46,36 @@ Respond ONLY with JSON in this exact format:
         .json({ isSuccess: false, message: "Invalid AI response format" });
     }
 
-    res
-      .status(200)
-      .json({ isSuccess: true, message: "Component generated", data: codeObj });
+    // 🔁 Update session: push chat and save generated code
+    const session = await Session.findById(sessionId);
+    if (!session) {
+      return res
+        .status(404)
+        .json({ isSuccess: false, message: "Session not found" });
+    }
+
+    // Append user prompt
+    session.chat.push({ role: "user", message: prompt });
+
+    // Append assistant response (optional: you can stringify JSX/CSS or summarize it)
+    session.chat.push({
+      role: "assistant",
+      message: "Component generated successfully.",
+    });
+
+    // Save generated code to session
+    session.generatedCode = {
+      jsx: codeObj.jsx,
+      css: codeObj.css,
+    };
+
+    await session.save();
+
+    res.status(200).json({
+      isSuccess: true,
+      message: "Component generated and chat saved",
+      data: codeObj,
+    });
   } catch (err) {
     console.error("Error generating component:", err);
     return res

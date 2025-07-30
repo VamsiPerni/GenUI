@@ -5,6 +5,7 @@ const {
   getSessionByIdController,
   renameSessionController,
   deleteSessionController,
+  updateChatController,
 } = require("./controller");
 
 const sessionsRouter = express.Router();
@@ -14,5 +15,6 @@ sessionsRouter.post("/", createSessionController);
 sessionsRouter.get("/:id", getSessionByIdController);
 sessionsRouter.put("/:id", renameSessionController);
 sessionsRouter.delete("/:id", deleteSessionController);
+sessionsRouter.post("/chat/update", updateChatController);
 
 module.exports = { sessionsRouter };
