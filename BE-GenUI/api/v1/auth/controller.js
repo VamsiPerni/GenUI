@@ -39,7 +39,7 @@ const userSignupController = async (req, res) => {
 
     const { otp: hashedOtp } = sentOtpDoc;
 
-    const isCorrect = await bcrypt.compare(otp.toString(), hashedOtp);
+    const isCorrect = bcrypt.compare(otp.toString(), hashedOtp);
 
     if (!isCorrect) {
       res.status(400).json({
