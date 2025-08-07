@@ -10,6 +10,7 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { SessionPage } from "./pages/SessionPage";
 import { SessionManager } from "./components/sessionManager";
 import SessionDetail from "./components/sessionDetail";
+import { CookieConsent } from "./components/CookieConsent";
 
 const App = () => {
   const { appLoading, user } = useAppContext();
@@ -32,6 +33,7 @@ const App = () => {
   if (!isAuthenticated) {
     return (
       <BrowserRouter>
+        <CookieConsent />
         <Routes>
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
