@@ -51,61 +51,100 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-cyan-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-indigo-100 flex flex-col">
       <Navbar />
-      <div className="flex-grow flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-cyan-200">
-          <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">
-            Welcome Back
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-indigo-600 mb-1"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-cyan-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
-                placeholder="you@example.com"
-                required
-              />
+      <div className="flex-grow flex items-center justify-center p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full max-w-6xl">
+          <div className="hidden lg:flex flex-col justify-center bg-white rounded-xl shadow-lg border border-indigo-100 p-8">
+            <h2 className="text-2xl font-bold text-indigo-800 mb-4">
+              Before You Login
+            </h2>
+            <p className="text-gray-700 mb-3">
+              Please allow{" "}
+              <span className="font-semibold">third-party cookies</span>
+              in your browser for a smoother login experience.
+            </p>
+
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
+              <h3 className="text-indigo-700 font-semibold mb-2">
+                Dummy Credentials
+              </h3>
+              <p className="text-sm">
+                <span className="font-medium">Email:</span>{" "}
+                mohandathu6@gmail.com
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Password:</span> @VamsiPerni&7
+              </p>
             </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-indigo-600 mb-1"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-cyan-200 focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+
+            <p className="text-gray-600 text-sm">
+              Or you can create a new account if you don't already have one.
+            </p>
           </div>
-          <button
-            onClick={handleLogin}
-            className="w-full py-2 px-4 mt-6 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700 text-white rounded-lg shadow-md transition"
-          >
-            Login
-          </button>
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-cyan-600 hover:underline">
-              Sign up here
-            </Link>
-          </p>
+
+          <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg border border-indigo-100 mx-auto">
+            <h2 className="text-3xl font-bold text-center text-indigo-800">
+              Welcome Back
+            </h2>
+
+            <div className="space-y-4">
+              <div>
+                <label
+                  className="block text-sm font-medium text-indigo-700 mb-1"
+                  htmlFor="user-email"
+                >
+                  Email
+                </label>
+                <input
+                  id="user-email"
+                  type="email"
+                  name="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-indigo-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium text-indigo-700 mb-1"
+                  htmlFor="user-password"
+                >
+                  Password
+                </label>
+                <input
+                  id="user-password"
+                  type="password"
+                  name="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-indigo-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogin}
+              className="w-full py-2 px-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+            >
+              Login
+            </button>
+
+            <p className="text-center text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-medium text-indigo-600 hover:text-indigo-800 hover:underline transition duration-200"
+              >
+                Sign up here
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
       <Footer />
