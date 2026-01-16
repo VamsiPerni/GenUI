@@ -14,7 +14,11 @@ app.use(morgan("dev"));
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL_LOCAL, process.env.FRONTEND_URL_VERCEL],
+    origin: [
+      process.env.FRONTEND_URL_LOCAL,
+      process.env.FRONTEND_URL_VERCEL,
+      process.env.FRONTEND_URL_CUSTOM_DOMAIN,
+    ],
     credentials: true,
   })
 );
